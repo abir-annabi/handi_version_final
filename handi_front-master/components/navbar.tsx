@@ -547,10 +547,6 @@ export function Navbar({
     setNavigationMenuOuvert(menuId);
   };
 
-  const fermerMenuNavigation = () => {
-    setNavigationMenuOuvert(null);
-  };
-
   return (
     <header className={classes("app-header", "app-theme", hasCollapsibleSidebar && "app-header-candidat")} ref={headerRef}>
       <div className="app-header-inner">
