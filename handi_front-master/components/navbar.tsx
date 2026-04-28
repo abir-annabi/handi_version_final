@@ -168,7 +168,6 @@ export function Navbar({
           label: t("navbar.insights"),
           items: [
             { href: "/admin/supervision", label: t("navbar.supervision") },
-            { href: "/admin/entretiens", label: t("navbar.interviews") },
             { href: "/admin/tests-psychologiques", label: t("navbar.assessments") },
           ],
         },
@@ -224,7 +223,6 @@ export function Navbar({
       { href: "/admin/comptes", label: t("navbar.accounts") },
       { href: "/admin/supervision", label: t("navbar.supervision") },
       { href: "/admin/tests-psychologiques", label: t("navbar.assessments") },
-      { href: "/admin/entretiens", label: t("navbar.interviews") },
     ] satisfies NavItem[];
   }, [notificationsNonLues, t, utilisateur.role]);
 
