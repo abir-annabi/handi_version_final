@@ -510,6 +510,10 @@ export function Navbar({
     setMenuOuvert(false);
     setProfilMenuOuvert(false);
     setNavigationMenuOuvert(null);
+    // If sidebar is collapsed, open it first before navigation
+    if (hasCollapsibleSidebar && candidateSidebarCollapsed && onToggleCandidateSidebar) {
+      onToggleCandidateSidebar();
+    }
     router.push(chemin);
   };
 
@@ -518,11 +522,28 @@ export function Navbar({
 
   const basculerMenuNavigation = (menuId: string) => {
     setProfilMenuOuvert(false);
-    setNavigationMenuOuvert((current) => (current === menuId ? null : menuId));
+    // If sidebar is collapsed, open it first
+    if (hasCollapsibleSidebar && candidateSidebarCollapsed && onToggleCandidateSidebar) {
+      onToggleCandidateSidebar();
+      // Set a small delay to allow sidebar animation to start
+      setTimeout(() => {
+        setNavigationMenuOuvert((current) => (current === menuId ? null : menuId));
+      }, 100);
+    } else {
+      setNavigationMenuOuvert((current) => (current === menuId ? null : menuId));
+    }
+  };
+
+  const fermerMenuNavigation = () => {
+    setNavigationMenuOuvert(null);
   };
 
   const ouvrirMenuNavigation = (menuId: string) => {
     setProfilMenuOuvert(false);
+    // If sidebar is collapsed, open it first
+    if (hasCollapsibleSidebar && candidateSidebarCollapsed && onToggleCandidateSidebar) {
+      onToggleCandidateSidebar();
+    }
     setNavigationMenuOuvert(menuId);
   };
 

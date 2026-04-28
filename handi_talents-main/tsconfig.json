@@ -12,10 +12,7 @@
     "strict": false,
     "ignoreDeprecations": "6.0",
     "skipLibCheck": true,
-    "resolveJsonModule": true,3. Navbar
-- Modifier les initiales des boutons :
-  - Applications : remplacer “A” par “AP”.
-  - Assessments : remplacer “A” par “AS”.
+    "resolveJsonModule": true,
     "noUncheckedIndexedAccess": false,
     "exactOptionalPropertyTypes": false,
     "useUnknownInCatchVariables": false
