@@ -7,6 +7,7 @@ import { useI18n } from "@/components/i18n-provider";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LoadingState, PageHeader, StatCard } from "@/components/ui/layout";
+import { EntrepriseHome } from "@/components/entreprise-home";
 import { useAuth } from "@/hooks/useAuth";
 import { authenticatedFetch } from "@/lib/auth-utils";
 import { construireUrlApi } from "@/lib/config";
@@ -291,6 +292,73 @@ function HomeContent() {
           return;
         }
 
+        if (utilisateur.role === "entreprise") {
+          const [candidaturesResult, offresResult] = await Promise.allSettled([
+            fetchApiData<{ donnees: CandidateStatItem[] }>("/api/candidatures/statistiques"),
+            fetchApiData<{ donnees: { offres: any[] } }>("/api/entreprise/offres"),
+          ]);
+
+          const cards: WorkspaceStatCard[] = [];
+
+          // Process candidatures statistics
+          if (candidaturesResult.status === "fulfilled") {
+            const candidaturesData = candidaturesResult.value;
+            const stats = Array.isArray(candidaturesData.donnees) ? candidaturesData.donnees : 
+                         Array.isArray(candidaturesData) ? candidaturesData : [];
+            
+            const getStatValue = (statut: string) => {
+              const stat = stats.find(s => s.statut === statut);
+              return stat ? stat.count : 0;
+            };
+
+            const total = stats.reduce((sum, stat) => sum + (Number(stat.count) || 0), 0);
+            
+            cards.push(
+              {
+                label: "Total des candidatures",
+                value: total,
+                hint: "Données réelles - Candidatures reçues",
+              },
+              {
+                label: "Candidatures en attente",
+                value: getStatValue("pending"),
+                hint: "Données réelles - En cours d'examen",
+              },
+              {
+                label: "Candidats présélectionnés",
+                value: getStatValue("shortlisted"),
+                hint: "Données réelles - Retenus pour entretien",
+              },
+              {
+                label: "Candidats acceptés",
+                value: getStatValue("accepted"),
+                hint: "Données réelles - Embauchés avec succès",
+              }
+            );
+          }
+
+          // Process offers statistics
+          if (offresResult.status === "fulfilled") {
+            const offresData = offresResult.value;
+            const offres = offresData.donnees?.offres || [];
+            const activeOffers = offres.filter((offre: any) => offre.statut === "active" || offre.statut === "ouverte").length;
+            
+            cards.push({
+              label: "Offres actives",
+              value: activeOffers,
+              hint: `Données réelles - ${offres.length} offres au total`,
+            });
+          }
+
+          if (active) {
+            setWorkspaceStats(cards);
+            setCandidateStats([]);
+            setAdminStats(null);
+            setAdminWorkflow([]);
+          }
+          return;
+        }
+
         if (utilisateur.role === "inspecteur" || utilisateur.role === "aneti") {
           const overview = await fetchSupervisionResource<SupervisionOverview>("/statistics/overview");
           const cards: WorkspaceStatCard[] = [
@@ -379,6 +447,17 @@ function HomeContent() {
         loadingStats={loadingStats}
         erreurStats={erreurStats}
         t={t}
+      />
+    );
+  }
+
+  if (utilisateur.role === "entreprise") {
+    return (
+      <EntrepriseHome
+        utilisateurNom={utilisateur.nom}
+        stats={workspaceStats}
+        loadingStats={loadingStats}
+        erreurStats={erreurStats}
       />
     );
   }

@@ -114,7 +114,7 @@ export function Navbar({
   const profileShellRef = useRef<HTMLDivElement | null>(null);
   const keyboardBufferTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isCandidate = utilisateur.role === "candidat";
-  const hasCollapsibleSidebar = utilisateur.role === "candidat" || utilisateur.role === "admin";
+  const hasCollapsibleSidebar = utilisateur.role === "candidat" || utilisateur.role === "admin" || utilisateur.role === "entreprise";
   const keyboardModeEnabled = settings.keyboardMoveMode && isCandidate;
   const keyboardAnnouncement = keyboardModeEnabled ? t("accessibility.keyboardAnnouncement") : "";
 
@@ -185,6 +185,7 @@ export function Navbar({
 
     if (utilisateur.role === "entreprise") {
       return [
+        { href: "/home", label: t("navbar.workspace") },
         { href: "/entreprise/dashboard", label: t("navbar.insights") },
         { href: "/entreprise/reports-requests", label: t("navbar.reportsRequests") },
         {

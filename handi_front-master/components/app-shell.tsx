@@ -9,18 +9,24 @@ export function AppShell({ utilisateur, children }: { utilisateur: UtilisateurCo
   const roleClassName = `app-shell-${utilisateur.role}`;
   const pathname = usePathname();
   const isAdmin = utilisateur.role === "admin";
+  const isEntreprise = utilisateur.role === "entreprise";
   const [candidateSidebarExpandedPath, setCandidateSidebarExpandedPath] = useState<string | null>(null);
   const [adminSidebarCollapsed, setAdminSidebarCollapsed] = useState(false);
-  const hasCollapsibleSidebar = utilisateur.role === "candidat" || isAdmin;
+  const [entrepriseSidebarCollapsed, setEntrepriseSidebarCollapsed] = useState(false);
+  const hasCollapsibleSidebar = utilisateur.role === "candidat" || isAdmin || isEntreprise;
   const candidateSidebarCollapsed = hasCollapsibleSidebar
     ? isAdmin
       ? adminSidebarCollapsed
+      : isEntreprise
+      ? entrepriseSidebarCollapsed
       : candidateSidebarExpandedPath !== pathname
     : false;
   const collapsedClassName =
     hasCollapsibleSidebar && candidateSidebarCollapsed
       ? isAdmin
         ? "app-shell-admin-collapsed"
+        : isEntreprise
+        ? "app-shell-entreprise-collapsed"
         : "app-shell-candidat-collapsed"
       : "";
 
@@ -36,6 +42,10 @@ export function AppShell({ utilisateur, children }: { utilisateur: UtilisateurCo
         onToggleCandidateSidebar={() => {
           if (isAdmin) {
             setAdminSidebarCollapsed((current) => !current);
+            return;
+          }
+          if (isEntreprise) {
+            setEntrepriseSidebarCollapsed((current) => !current);
             return;
           }
           setCandidateSidebarExpandedPath((current) => (current === pathname ? null : pathname));
